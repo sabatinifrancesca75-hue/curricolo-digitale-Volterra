@@ -1,570 +1,1031 @@
-import React, { useState } from 'react';
-import { 
-  BookOpen, 
-  Menu, 
-  X, 
-  FileText, 
-  Printer, 
-  Info,
-  Shield,
-  Cpu,
-  TableProperties,
-  GraduationCap,
-  CalendarDays,
-  Target,
-  LayoutDashboard,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react';
-
-// --- COMPONENTI UI RIUTILIZZABILI ---
-const Card = ({ title, icon: Icon, children, className = "" }) => (
-  <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-6 ${className}`}>
-    <div className="flex items-center gap-3 mb-4">
-      {Icon && <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Icon size={20} /></div>}
-      <h3 className="text-lg font-bold text-slate-800">{title}</h3>
-    </div>
-    <div className="text-slate-600">{children}</div>
-  </div>
-);
-
-const TabButton = ({ active, onClick, icon: Icon, label, color }) => {
-  // Correzione per Tailwind: mappa esplicita delle classi colore
-  const activeClasses = {
-    blue: 'border-blue-600 text-blue-700 bg-blue-50',
-    green: 'border-green-600 text-green-700 bg-green-50',
-    orange: 'border-orange-600 text-orange-700 bg-orange-50'
-  };
-
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-2 px-6 py-3 font-semibold transition-all border-b-2 ${
-        active 
-          ? activeClasses[color] 
-          : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-      }`}
-    >
-      <Icon size={18} />
-      {label}
-    </button>
-  );
-};
-
-// --- SEZIONI DELL'APP ---
-
-const Dashboard = ({ setSection }) => (
-  <div className="space-y-6 animate-fadeIn">
-    <div className="bg-gradient-to-r from-slate-900 to-blue-900 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
-      <div className="relative z-10">
-        <h1 className="text-3xl font-bold mb-2">Portale Curricolo Digitale</h1>
-        <p className="text-blue-100 max-w-2xl text-lg">
-          Liceo Scientifico "Vito Volterra". Piattaforma per la consultazione del curricolo e la progettazione didattica interdisciplinare.
-        </p>
-        <div className="mt-8 flex gap-4">
-          <button onClick={() => setSection('scheda')} className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-2.5 rounded-lg font-semibold flex items-center transition-colors">
-            <Printer size={18} className="mr-2" />
-            Compila Scheda Operativa
-          </button>
-          <button onClick={() => setSection('4')} className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-2.5 rounded-lg font-semibold transition-colors">
-            Esplora Competenze
-          </button>
-        </div>
-      </div>
-      <Cpu className="absolute -right-10 -bottom-10 w-64 h-64 text-white opacity-5" />
-    </div>
-
-    <div className="grid md:grid-cols-3 gap-6">
-      <div className="bg-white p-6 rounded-xl border-t-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSection('4')}>
-        <Info className="text-blue-500 mb-4" size={32} />
-        <h3 className="font-bold text-lg mb-2">10. Alfabetizzazione e Dati</h3>
-        <p className="text-sm text-slate-500">Accesso critico, validazione fonti e consapevolezza algoritmica.</p>
-      </div>
-      <div className="bg-white p-6 rounded-xl border-t-4 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSection('4')}>
-        <Menu className="text-green-500 mb-4" size={32} />
-        <h3 className="font-bold text-lg mb-2">11. Comunicazione</h3>
-        <p className="text-sm text-slate-500">Argomentazione razionale, collaborazione e cittadinanza attiva.</p>
-      </div>
-      <div className="bg-white p-6 rounded-xl border-t-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSection('4')}>
-        <Shield className="text-orange-500 mb-4" size={32} />
-        <h3 className="font-bold text-lg mb-2">12. Sicurezza e Benessere</h3>
-        <p className="text-sm text-slate-500">Identità digitale, valutazione del rischio e sostenibilità.</p>
-      </div>
-    </div>
-
-    <div className="grid md:grid-cols-2 gap-6">
-      <Card title="Stato del Progetto" icon={AlertCircle}>
-        <ul className="space-y-3 text-sm">
-          <li className="flex justify-between items-center"><span className="text-slate-600">A.S. di riferimento:</span> <strong className="text-slate-900">2025/2026</strong></li>
-          <li className="flex justify-between items-center"><span className="text-slate-600">Stato:</span> <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs font-bold">BOZZA IN REVISIONE</span></li>
-          <li className="flex justify-between items-center"><span className="text-slate-600">Framework Base:</span> <strong className="text-slate-900">DigComp 3.0</strong></li>
-        </ul>
-      </Card>
-      <Card title="Strumenti Rapidi" icon={LayoutDashboard}>
-        <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => setSection('6')} className="p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:text-blue-600 text-left text-sm font-semibold transition-colors flex items-center justify-between">
-            Rubrica Valutazione <ArrowRight size={16} />
-          </button>
-          <button onClick={() => setSection('2')} className="p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:text-blue-600 text-left text-sm font-semibold transition-colors flex items-center justify-between">
-            Aree DigComp <ArrowRight size={16} />
-          </button>
-          <button onClick={() => setSection('3')} className="p-3 border border-slate-200 rounded-lg hover:border-purple-500 hover:text-purple-600 text-left text-sm font-semibold transition-colors flex items-center justify-between col-span-2">
-            Linee Guida Intelligenza Artificiale <ArrowRight size={16} />
-          </button>
-        </div>
-      </Card>
-    </div>
-  </div>
-);
-
-const Section1_Premessa = () => (
-  <div className="space-y-6 animate-fadeIn">
-    <div className="flex items-center justify-between mb-6 border-b pb-4">
-      <h2 className="text-2xl font-bold text-slate-800">1. Premessa Metodologica</h2>
-    </div>
-
-    <div className="bg-blue-600 text-white rounded-xl p-6 shadow-md">
-      <h3 className="font-bold text-lg mb-2 flex items-center"><Target className="mr-2" /> Principio Unitario di Fondo</h3>
-      <p className="text-blue-50 leading-relaxed">
-        Nel Liceo Scientifico la cittadinanza digitale si fonda sull'applicazione del <strong>metodo critico e scientifico</strong> all'ecosistema digitale, inteso come ambiente informativo, relazionale e socio-tecnico complesso. Le competenze non sono compartimenti stagni, ma tre prospettive: conoscenza, tecnologia e responsabilità umana.
-      </p>
-    </div>
-
-    <div className="grid md:grid-cols-2 gap-6">
-      <Card title="Finalità" icon={GraduationCap}>
-        <ul className="space-y-2">
-          <li className="flex items-start gap-2"><CheckCircle2 className="text-green-500 shrink-0 mt-0.5" size={16} /><span>Cittadinanza digitale come competenza chiave europea.</span></li>
-          <li className="flex items-start gap-2"><CheckCircle2 className="text-green-500 shrink-0 mt-0.5" size={16} /><span>Integrazione di tecnologia, pensiero critico ed etica.</span></li>
-          <li className="flex items-start gap-2"><CheckCircle2 className="text-green-500 shrink-0 mt-0.5" size={16} /><span>Uso consapevole e sicuro negli studi e nella vita.</span></li>
-        </ul>
-      </Card>
-      <Card title="Principi Pedagogici" icon={BookOpen}>
-        <ul className="space-y-2">
-          <li className="flex items-start gap-2"><CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} /><span>Centralità del metodo scientifico.</span></li>
-          <li className="flex items-start gap-2"><CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} /><span>Apprendimento situato (compiti autentici).</span></li>
-          <li className="flex items-start gap-2"><CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} /><span>Trasversalità alle discipline.</span></li>
-        </ul>
-      </Card>
-    </div>
-  </div>
-);
-
-const Section2_DigComp = () => (
-  <div className="space-y-6 animate-fadeIn">
-    <div className="flex items-center justify-between mb-6 border-b pb-4">
-      <h2 className="text-2xl font-bold text-slate-800">2. Riferimento al Framework DigComp 3.0</h2>
-    </div>
-    
-    <p className="text-slate-600 mb-4">
-      Il curricolo si basa sulle cinque aree di competenza del framework europeo DigComp 3.0, garantendo standardizzazione e riconoscibilità.
-    </p>
-
-    <div className="grid gap-4">
-      {[
-        { id: 1, title: "Ricerca, valutazione e gestione delle informazioni", desc: "Individuare, selezionare, analizzare e organizzare dati digitali." },
-        { id: 2, title: "Comunicazione e collaborazione", desc: "Interazione, partecipazione e collaborazione negli ambienti digitali." },
-        { id: 3, title: "Creazione di contenuti digitali", desc: "Produzione, rielaborazione e condivisione nel rispetto del copyright." },
-        { id: 4, title: "Sicurezza, benessere e uso responsabile", desc: "Protezione dati, sicurezza dispositivi, benessere e sostenibilità." },
-        { id: 5, title: "Identificazione e risoluzione dei problemi", desc: "Uso critico e creativo per affrontare problemi e innovare." }
-      ].map(area => (
-        <div key={area.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-start">
-          <div className="w-10 h-10 bg-blue-100 text-blue-600 font-bold rounded-lg flex items-center justify-center mr-4 shrink-0">
-            Area {area.id}
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-800 text-lg">{area.title}</h4>
-            <p className="text-slate-600 mt-1">{area.desc}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const Section3_IA = () => (
-  <div className="space-y-6 animate-fadeIn">
-    <div className="flex items-center justify-between mb-6 border-b pb-4">
-      <h2 className="text-2xl font-bold text-slate-800">3. Dimensione Trasversale dell'IA</h2>
-    </div>
-
-    <div className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-2xl p-8 text-white shadow-lg">
-      <Cpu className="w-12 h-12 text-purple-300 mb-4" />
-      <h3 className="text-2xl font-bold mb-4">L'IA come competenza di cittadinanza</h3>
-      <p className="text-purple-100 text-lg leading-relaxed mb-8">
-        Nel nostro istituto, l'Intelligenza Artificiale non è vietata, ma gestita come strumento critico. Viene considerata una competenza trasversale che richiede supervisione umana costante.
-      </p>
-      
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-          <h4 className="font-bold text-purple-200 mb-2">Comprendere i meccanismi</h4>
-          <p className="text-sm text-purple-50">Capire il funzionamento di base dei sistemi algoritmici e generativi, uscendo dalla logica della "scatola magica".</p>
-        </div>
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-          <h4 className="font-bold text-purple-200 mb-2">Riconoscere limiti e bias</h4>
-          <p className="text-sm text-purple-50">Saper identificare allucinazioni, pregiudizi algoritmici (bias) e limiti nei contenuti prodotti.</p>
-        </div>
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-          <h4 className="font-bold text-purple-200 mb-2">Uso Trasparente</h4>
-          <p className="text-sm text-purple-50">Dichiarare sempre l'uso dell'IA (i prompt utilizzati, gli strumenti scelti) nei compiti e nelle ricerche.</p>
-        </div>
-        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-          <h4 className="font-bold text-purple-200 mb-2">Human-in-the-loop</h4>
-          <p className="text-sm text-purple-50">Esercitare sempre la supervisione critica: la responsabilità finale del prodotto rimane dell'essere umano.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const Section4_Competenze = () => {
-  const [activeTab, setActiveTab] = useState('10');
-
-  return (
-    <div className="space-y-6 animate-fadeIn">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-2xl font-bold text-slate-800">4. Struttura del Curricolo</h2>
-      </div>
-      <p className="text-slate-600 mb-6">Naviga tra le Competenze di Educazione Civica per visualizzare i traguardi specifici.</p>
-
-      {/* Tabs */}
-      <div className="flex overflow-x-auto border-b border-slate-200 bg-white rounded-t-xl">
-        <TabButton active={activeTab === '10'} onClick={() => setActiveTab('10')} icon={Info} label="Comp. 10 - Info & Dati" color="blue" />
-        <TabButton active={activeTab === '11'} onClick={() => setActiveTab('11')} icon={Menu} label="Comp. 11 - Comunicazione" color="green" />
-        <TabButton active={activeTab === '12'} onClick={() => setActiveTab('12')} icon={Shield} label="Comp. 12 - Sicurezza" color="orange" />
-      </div>
-
-      {/* Content Area */}
-      <div className="bg-white border border-t-0 border-slate-200 rounded-b-xl p-8 shadow-sm">
-        
-        {activeTab === '10' && (
-          <div className="animate-fadeIn space-y-6">
-            <h3 className="text-2xl font-bold text-blue-800 mb-6 border-b pb-4">Accesso critico e responsabile alle informazioni</h3>
-            <div className="grid gap-6">
-              <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
-                <h4 className="font-bold text-slate-800 text-lg">10.1 Validazione epistemologica</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente è in grado di analizzare, confrontare e valutare criticamente fonti, dati e contenuti digitali in contesti di ricerca complessa, distinguendo fatti, opinioni e interpretazioni.</p>
-              </div>
-              <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
-                <h4 className="font-bold text-slate-800 text-lg">10.2 Consapevolezza algoritmica</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente è in grado di interpretare, organizzare e rielaborare dati e informazioni, riconoscendo il ruolo dei modelli matematici e algoritmici, i loro limiti e bias.</p>
-              </div>
-              <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
-                <h4 className="font-bold text-slate-800 text-lg">10.3 Produzione responsabile</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente produce contenuti digitali operando in modo critico e responsabile, nel rispetto del diritto d'autore e dichiarando l'eventuale uso di IA.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === '11' && (
-          <div className="animate-fadeIn space-y-6">
-            <h3 className="text-2xl font-bold text-green-800 mb-6 border-b pb-4">Comunicazione e cooperazione digitale</h3>
-            <div className="grid gap-6">
-              <div className="bg-green-50 p-5 rounded-lg border border-green-100">
-                <h4 className="font-bold text-slate-800 text-lg">11.1 Adeguatezza comunicativa</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente usa consapevolmente linguaggi e registri della comunicazione digitale nei diversi contesti, adattando lo stile allo scopo e ai destinatari.</p>
-              </div>
-              <div className="bg-green-50 p-5 rounded-lg border border-green-100">
-                <h4 className="font-bold text-slate-800 text-lg">11.2 Argomentazione razionale</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente argomenta e discute idee in rete utilizzando criteri di coerenza logico-argomentativa, contrastando fallacie logiche e linguaggi ostili.</p>
-              </div>
-              <div className="bg-green-50 p-5 rounded-lg border border-green-100">
-                <h4 className="font-bold text-slate-800 text-lg">11.3 Collaborazione digitale</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente partecipa a processi di costruzione condivisa della conoscenza in ambienti cooperativi, assumendo comportamenti inclusivi.</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === '12' && (
-          <div className="animate-fadeIn space-y-6">
-            <h3 className="text-2xl font-bold text-orange-800 mb-6 border-b pb-4">Identità digitale, sicurezza e benessere</h3>
-            <div className="grid gap-6">
-              <div className="bg-orange-50 p-5 rounded-lg border border-orange-100">
-                <h4 className="font-bold text-slate-800 text-lg">12.1 Identità digitale e reputazione</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente gestisce consapevolmente i dati personali e l'impronta digitale, conoscendo normative e conseguenze sulla reputazione.</p>
-              </div>
-              <div className="bg-orange-50 p-5 rounded-lg border border-orange-100">
-                <h4 className="font-bold text-slate-800 text-lg">12.2 Sicurezza digitale</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente valuta e previene rischi negli ambienti digitali, adottando misure per proteggere dispositivi e identità.</p>
-              </div>
-              <div className="bg-orange-50 p-5 rounded-lg border border-orange-100">
-                <h4 className="font-bold text-slate-800 text-lg">12.3 Benessere e sostenibilità</h4>
-                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente usa le tecnologie in modo equilibrato, orientandosi al benessere psicofisico e alla sostenibilità ambientale.</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const Section6_Rubrica = () => (
-  <div className="space-y-6 animate-fadeIn">
-    <div className="flex items-center justify-between mb-6 border-b pb-4">
-      <h2 className="text-2xl font-bold text-slate-800">6. Rubrica di Valutazione</h2>
-    </div>
-    
-    <p className="text-slate-600 mb-6">
-      Sintesi degli indicatori per la valutazione delle competenze, allineati ai livelli DigComp (Base, Intermedio, Avanzato).
-    </p>
-
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-      <table className="w-full text-sm text-left">
-        <thead className="bg-slate-800 text-white">
-          <tr>
-            <th className="p-4 w-1/4">Competenza</th>
-            <th className="p-4">Livello Base</th>
-            <th className="p-4">Livello Intermedio</th>
-            <th className="p-4">Livello Avanzato</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200 text-slate-700">
-          <tr className="hover:bg-slate-50">
-            <td className="p-4 font-bold text-blue-700">10. Info e Dati</td>
-            <td className="p-4">Seleziona informazioni pertinenti con supporto; riconosce fatti/opinioni.</td>
-            <td className="p-4">Verifica attendibilità fonti; analizza dataset distinguendo interpretazioni.</td>
-            <td className="p-4 font-semibold">Valida fonti complesse (anche IA); riconosce bias algoritmici; produce contenuti citando le fonti.</td>
-          </tr>
-          <tr className="hover:bg-slate-50">
-            <td className="p-4 font-bold text-green-700">11. Comunicazione</td>
-            <td className="p-4">Usa linguaggio adeguato e rispetta la netiquette con guida.</td>
-            <td className="p-4">Argomenta usando fonti attendibili; partecipa attivamente online.</td>
-            <td className="p-4 font-semibold">Seleziona registri in contesti complessi; contrasta fallacie/odio; coordina lavori collaborativi.</td>
-          </tr>
-          <tr className="hover:bg-slate-50">
-            <td className="p-4 font-bold text-orange-700">12. Sicurezza</td>
-            <td className="p-4">Applica impostazioni privacy base; riconosce comportamenti dannosi.</td>
-            <td className="p-4">Gestisce dati in autonomia; misura i rischi; usa la rete in modo equilibrato.</td>
-            <td className="p-4 font-semibold">Valuta rischi complessi; analizza impatto etico (GDPR, profilazione) e promuove la sostenibilità.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-);
-
-// --- COMPONENTE SCHEDA OPERATIVA ---
-const SchedaOperativa = () => (
-  <div className="animate-fadeIn bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-    <div className="bg-slate-900 text-white p-6 flex justify-between items-center print:bg-white print:text-black print:border-b-2">
-      <div>
-        <h2 className="text-2xl font-bold flex items-center"><Printer className="mr-3" /> Scheda Progettazione Modulo</h2>
-        <p className="text-slate-400 text-sm mt-1 print:text-slate-600">Da compilare a cura del Consiglio di Classe / Dipartimento</p>
-      </div>
-      <button onClick={() => window.print()} className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors print:hidden">
-        Stampa/Esporta PDF
-      </button>
-    </div>
-
-    <form className="p-8 space-y-8 text-sm max-w-4xl mx-auto">
-      
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Dipartimento</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
-        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Disciplina</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
-        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Classe/i</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
-        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Periodo</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
-      </div>
-
-      <div className="border-t border-slate-200 pt-6">
-        <h3 className="text-lg font-bold text-slate-800 mb-4">Riferimenti Curricolari</h3>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-3">
-            <p className="font-semibold text-slate-700">Competenza Target:</p>
-            <label className="flex items-center p-3 border border-slate-200 rounded cursor-pointer hover:bg-blue-50"><input type="radio" name="comp" className="mr-3 w-4 h-4 text-blue-600" /> <span className="font-medium">10 – Info e Dati</span></label>
-            <label className="flex items-center p-3 border border-slate-200 rounded cursor-pointer hover:bg-green-50"><input type="radio" name="comp" className="mr-3 w-4 h-4 text-green-600" /> <span className="font-medium">11 – Comunicazione</span></label>
-            <label className="flex items-center p-3 border border-slate-200 rounded cursor-pointer hover:bg-orange-50"><input type="radio" name="comp" className="mr-3 w-4 h-4 text-orange-600" /> <span className="font-medium">12 – Sicurezza & Benessere</span></label>
-          </div>
-          <div>
-            <p className="font-semibold text-slate-700 mb-2">Codice Traguardo (es. 10.1):</p>
-            <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none mb-4" />
-            
-            <p className="font-semibold text-slate-700 mb-2">Nucleo Disciplinare:</p>
-            <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2" placeholder="Quali argomenti della tua materia tratterai?"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-slate-200 pt-6">
-        <h3 className="text-lg font-bold text-slate-800 mb-4">L'Attività (Compito Autentico)</h3>
-        <div className="space-y-4">
-          <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Titolo Attività</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
-          <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Cosa fanno gli studenti?</label><textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3"></textarea></div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Prodotto finale atteso</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Modalità</label>
-              <div className="flex gap-4 pt-2">
-                <label className="flex items-center"><input type="checkbox" className="mr-2" /> Individuale</label>
-                <label className="flex items-center"><input type="checkbox" className="mr-2" /> Gruppo</label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-purple-200 bg-purple-50/50 -mx-8 px-8 py-6">
-        <h3 className="text-lg font-bold text-purple-900 mb-4 flex items-center"><Cpu className="mr-2 w-5 h-5" /> Impatto Intelligenza Artificiale</h3>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
-            <p className="font-medium text-slate-700 mb-3">L'attività prevede esplicitamente l'uso di IA?</p>
-            <div className="flex gap-6 mb-4">
-              <label className="flex items-center"><input type="radio" name="ia" className="mr-2 w-4 h-4 text-purple-600" /> No</label>
-              <label className="flex items-center"><input type="radio" name="ia" className="mr-2 w-4 h-4 text-purple-600" /> Sì</label>
-            </div>
-            <div className="space-y-2 pl-4 border-l-2 border-purple-200">
-              <label className="flex items-center"><input type="checkbox" className="mr-2" /> Analisi critica (Fact-checking output)</label>
-              <label className="flex items-center"><input type="checkbox" className="mr-2" /> Produzione assistita testuale/visiva</label>
-              <label className="flex items-center"><input type="checkbox" className="mr-2" /> Confronto Umano vs Macchina</label>
-            </div>
-          </div>
-          <div>
-            <p className="font-medium text-slate-700 mb-2">Come verrà documentato l'apporto dell'IA?</p>
-            <textarea className="w-full bg-white border border-purple-200 rounded p-2 focus:ring-2 focus:ring-purple-500 outline-none" rows="3" placeholder="Es: Gli studenti dovranno allegare i prompt usati..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-slate-200 pt-6 grid md:grid-cols-2 gap-8">
-        <div>
-          <h3 className="text-lg font-bold text-slate-800 mb-2">Valutazione</h3>
-          <p className="text-xs text-slate-500 mb-2">Evidenze osservabili e indicatori dalla rubrica</p>
-          <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none mb-3" rows="3"></textarea>
-          <div className="flex gap-4 p-3 bg-slate-50 rounded border border-slate-200">
-            <span className="font-bold text-slate-600 mr-2">Livello Atteso:</span>
-            <label className="flex items-center"><input type="checkbox" className="mr-1" /> Base</label>
-            <label className="flex items-center"><input type="checkbox" className="mr-1" /> Int.</label>
-            <label className="flex items-center"><input type="checkbox" className="mr-1" /> Avanz.</label>
-          </div>
-        </div>
-        <div>
-           <h3 className="text-lg font-bold text-slate-800 mb-2">Riflessione Docente (Post)</h3>
-           <p className="text-xs text-slate-500 mb-2">Da compilare a fine modulo</p>
-           <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none mb-2" rows="2" placeholder="Cosa ha funzionato?"></textarea>
-           <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2" placeholder="Cosa migliorare?"></textarea>
-        </div>
-      </div>
-
-    </form>
-  </div>
-);
-
-// --- APP ROOT ---
-
-export default function App() {
-  const [activeSection, setActiveSection] = useState('home');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Mappa di navigazione aggiornata con TUTTI gli ID reali
-  const navItems = [
-    { id: 'home', label: 'Dashboard', icon: LayoutDashboard },
-    { id: '1', label: 'Premessa', icon: BookOpen },
-    { id: '2', label: 'Aree DigComp', icon: Target },
-    { id: '4', label: 'Competenze & Traguardi', icon: Info },
-    { id: '3', label: 'Guidelines IA', icon: Cpu },
-    { id: '6', label: 'Rubrica Valutazione', icon: TableProperties },
-    { id: 'scheda', label: 'Scheda Operativa', icon: FileText, isSpecial: true },
-  ];
-
-  // Ora il renderContent gestisce tutte le casistiche senza "cadere nel vuoto"
-  const renderContent = () => {
-    switch(activeSection) {
-      case 'home': return <Dashboard setSection={setActiveSection} />;
-      case '1': return <Section1_Premessa />;
-      case '2': return <Section2_DigComp />;
-      case '3': return <Section3_IA />;
-      case '4': return <Section4_Competenze />;
-      case '6': return <Section6_Rubrica />;
-      case 'scheda': return <SchedaOperativa />;
-      default: return <Dashboard setSection={setActiveSection} />;
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curricolo di Cittadinanza Digitale - Liceo Vito Volterra</title>
+  <style>
+    :root {
+      --blu: #163f98;
+      --blu-2: #2458b8;
+      --azzurro: #9dccff;
+      --azzurro-2: #eaf3ff;
+      --azzurro-3: #f4f9ff;
+      --bordo: #d7e7ff;
+      --testo: #1f2937;
+      --muted: #64748b;
+      --bianco: #ffffff;
+      --ombra: 0 12px 30px rgba(22, 63, 152, 0.10);
+      --raggio: 22px;
     }
-  };
 
-  return (
-    <div className="min-h-screen bg-slate-100 flex font-sans text-slate-900 selection:bg-blue-200">
-      
-      {/* Sidebar Navigation */}
-      <aside className={`
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-        md:translate-x-0 fixed md:sticky top-0 left-0 z-20 w-64 h-screen 
-        bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out
-        flex flex-col print:hidden
-      `}>
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <div>
-            <h1 className="font-extrabold text-xl text-slate-900 tracking-tight">Vito Volterra</h1>
-            <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mt-1">DigiEdu Portal</p>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--testo);
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 55%, #d9ecff 100%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .app {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      height: calc(100vh - 48px);
+      background: rgba(255,255,255,0.96);
+      border: 1px solid #cfe2ff;
+      border-radius: 30px;
+      box-shadow: var(--ombra);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    .sidebar-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 20px;
+    }
+
+    .brand-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-top img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 18px;
+      border: 1px solid #cfe2ff;
+      background: white;
+      padding: 4px;
+      box-shadow: 0 4px 10px rgba(22,63,152,.06);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--azzurro-2);
+      color: var(--blu);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid #d8e9ff;
+    }
+
+    .sidebar h1 {
+      margin: 12px 0 8px;
+      font-size: 28px;
+      line-height: 1.1;
+      color: var(--blu);
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--bordo);
+      background: white;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--blu-2);
+      box-shadow: 0 0 0 3px rgba(36, 88, 184, 0.10);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn,
+    .tab-btn,
+    .top-btn {
+      border: 1px solid var(--bordo);
+      background: white;
+      color: var(--blu);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .filter-btn.active,
+    .tab-btn.active,
+    .top-btn:hover {
+      background: var(--blu);
+      color: white;
+      border-color: var(--blu);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      background: var(--azzurro-3);
+      border: 1px solid #dbeafe;
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .stat small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .stat strong {
+      font-size: 24px;
+      color: var(--blu);
+    }
+
+    .nav-links {
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .nav-links a {
+      padding: 10px 12px;
+      border-radius: 16px;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover {
+      background: #edf5ff;
+      color: var(--blu);
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--blu) 0%, var(--blu-2) 45%, var(--azzurro) 100%);
+      color: white;
+      border: 1px solid #bfd8ff;
+      border-radius: 34px;
+      padding: 32px;
+      box-shadow: 0 18px 35px rgba(22, 63, 152, 0.18);
+      display: grid;
+      grid-template-columns: 1.5fr .9fr;
+      gap: 24px;
+    }
+
+    .hero h2 {
+      margin: 14px 0 0;
+      font-size: 48px;
+      line-height: 1.05;
+    }
+
+    .hero p {
+      color: rgba(255,255,255,.95);
+      line-height: 1.7;
+      max-width: 900px;
+    }
+
+    .hero-badges,
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .hero-badges span,
+    .badges span {
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero-badges span { background: rgba(255,255,255,.16); }
+    .hero-badges span.primary { background: rgba(255,255,255,.95); color: var(--blu); }
+
+    .hero-stats {
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-card,
+    .card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--bordo);
+      border-radius: 24px;
+      box-shadow: var(--ombra);
+    }
+
+    .hero-card {
+      color: var(--testo);
+      padding: 18px;
+    }
+
+    .hero-card small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .hero-card strong {
+      display: block;
+      color: var(--blu);
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.1;
+      color: #0f172a;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 920px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border: 1px solid var(--bordo);
+      background: white;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 16px; }
+
+    .card {
+      padding: 20px;
+    }
+
+    .card h4, .card h5 {
+      margin: 0 0 8px;
+      color: #0f172a;
+    }
+
+    .card p, .card li {
+      color: #334155;
+      line-height: 1.65;
+    }
+
+    .soft {
+      background: var(--azzurro-3);
+      border: 1px solid #dbeafe;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .competenza-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .badge-id {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--blu);
+      background: linear-gradient(135deg, rgba(22,63,152,.12), rgba(157,204,255,.22));
+      width: fit-content;
+      border: 1px solid #d6e7ff;
+    }
+
+    .accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--bordo);
+      border-radius: 18px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      border: 0;
+      background: white;
+      cursor: pointer;
+      padding: 16px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font: inherit;
+    }
+
+    .accordion-trigger strong { color: #0f172a; font-size: 15px; }
+    .accordion-trigger small { color: var(--muted); display: block; margin-top: 4px; }
+    .accordion-trigger span:last-child { font-size: 20px; color: var(--blu); }
+
+    .accordion-content {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid #eef4ff;
+    }
+
+    .accordion-item.open .accordion-content { display: block; }
+    .accordion-item.open .accordion-trigger { background: #fafcff; }
+
+    .tabs { display: flex; flex-direction: column; gap: 14px; }
+    .tab-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .progress-wrap { display: flex; flex-direction: column; gap: 10px; }
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: #e7f0ff;
+      overflow: hidden;
+      border: 1px solid #dbeafe;
+    }
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--blu), var(--azzurro));
+      border-radius: inherit;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .timeline-card {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .timeline-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--blu);
+      background: #edf5ff;
+      border: 1px solid var(--bordo);
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .monitor {
+      background: linear-gradient(135deg, var(--blu), #73b6ff);
+      color: white;
+      border-radius: 30px;
+      padding: 24px;
+      box-shadow: 0 18px 35px rgba(22, 63, 152, 0.18);
+      border: 1px solid #bfd8ff;
+    }
+
+    .monitor .soft-item {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      color: white;
+      border-radius: 16px;
+      padding: 12px 14px;
+      backdrop-filter: blur(4px);
+    }
+
+    .hidden { display: none !important; }
+    mark {
+      background: #fff0a8;
+      color: #1f2937;
+      padding: 0 .18em;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 1180px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .hero { grid-template-columns: 1fr; }
+      .grid-5 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .timeline-card { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      body { font-size: 15px; }
+      .app { padding: 14px; gap: 16px; }
+      .hero { padding: 22px; }
+      .hero h2 { font-size: 34px; }
+      .section-head h3 { font-size: 28px; }
+      .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-inner">
+        <div>
+          <div class="brand-top">
+            <img src="logo-volterra.png" alt="Logo Liceo Vito Volterra" />
+            <div class="pill">Web app curricolo</div>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-slate-400 hover:text-slate-700">
-            <X size={20} />
-          </button>
+          <h1>Curricolo di Cittadinanza Digitale</h1>
+          <div class="subtle">Liceo Scientifico Statale “Vito Volterra” di Ciampino<br />A.S. 2025/2026</div>
         </div>
-        
-        <nav className="flex-1 overflow-y-auto py-6 px-4">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Principale</p>
-          <ul className="space-y-1.5">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              return (
-                <li key={item.id}>
-                  <button
-                    onClick={() => {
-                      setActiveSection(item.id);
-                      setIsSidebarOpen(false);
-                    }}
-                    className={`w-full text-left flex items-center px-3 py-2.5 rounded-lg transition-all text-sm font-medium
-                      ${isActive 
-                        ? (item.isSpecial ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-50 text-blue-700') 
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
-                      ${item.isSpecial && !isActive ? 'mt-6 border border-slate-200 bg-white shadow-sm' : ''}
-                    `}
-                  >
-                    <Icon className={`w-5 h-5 mr-3 ${isActive && !item.isSpecial ? 'text-blue-600' : (item.isSpecial && isActive ? 'text-white' : 'text-slate-400')}`} />
-                    {item.label}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+
+        <div class="search-box">
+          <input id="searchInput" type="text" placeholder="Cerca sezioni, traguardi, IA, sicurezza..." />
+        </div>
+
+        <div>
+          <div class="subtle" style="margin-bottom:8px;font-weight:700;color:#334155">Filtro competenza</div>
+          <div class="filters">
+            <button class="filter-btn active" data-filter="all">Tutte</button>
+            <button class="filter-btn" data-filter="10">10</button>
+            <button class="filter-btn" data-filter="11">11</button>
+            <button class="filter-btn" data-filter="12">12</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><small>Competenze</small><strong>3</strong></div>
+          <div class="stat"><small>Traguardi</small><strong>9</strong></div>
+          <div class="stat"><small>Aree DigComp</small><strong>5</strong></div>
+          <div class="stat"><small>Formato</small><strong>1 file</strong></div>
+        </div>
+
+        <nav class="nav-links">
+          <a href="#panoramica">Panoramica</a>
+          <a href="#competenze">Competenze</a>
+          <a href="#digcomp">DigComp & IA</a>
+          <a href="#progressione">Progressione</a>
+          <a href="#rubrica">Rubrica</a>
+          <a href="#discipline">Discipline</a>
+          <a href="#classi">Per classe</a>
+          <a href="#attivita">Attività</a>
+          <a href="#piano">Piano annuale</a>
         </nav>
+      </div>
+    </aside>
 
-        <div className="p-4 border-t border-slate-100">
-          <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-500 text-center">
-            V 1.0 (Bozza 25/26)
+    <main id="contentRoot">
+      <section class="hero searchable" id="panoramica" data-block>
+        <div>
+          <div class="pill" style="background:rgba(255,255,255,.16); color:white; border-color:rgba(255,255,255,.18)">Consultazione interattiva del curricolo</div>
+          <h2>Curricolo Digitale consultabile, navigabile e interattivo</h2>
+          <p>
+            Il curricolo sviluppa la cittadinanza digitale come competenza chiave europea,
+            integrando pensiero critico, responsabilità etico-civile, sicurezza,
+            collaborazione e uso consapevole delle tecnologie.
+          </p>
+          <p>
+            Nel Liceo Scientifico la cittadinanza digitale si fonda sull'applicazione del metodo critico e scientifico
+            all'ecosistema digitale, inteso come ambiente informativo, relazionale e socio-tecnico complesso.
+          </p>
+          <div class="hero-badges">
+            <span class="primary">Liceo Vito Volterra</span>
+            <span>Basic</span>
+            <span>Intermediate</span>
+            <span>Advanced</span>
+            <span>IA trasversale</span>
+            <span>Educazione Civica 10–11–12</span>
           </div>
         </div>
-      </aside>
-
-      {/* Mobile Topbar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-10 px-4 py-3 flex items-center justify-between print:hidden">
-        <div className="font-bold text-slate-800">DigiEdu Portal</div>
-        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -mr-2 text-slate-600"><Menu size={20} /></button>
-      </div>
-
-      {/* Overlay for mobile sidebar */}
-      {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-10 md:hidden print:hidden" onClick={() => setIsSidebarOpen(false)} />}
-
-      {/* Main Area */}
-      <main className="flex-1 w-full max-w-6xl mx-auto p-4 pt-20 md:p-8 lg:p-10 print:p-0 print:m-0 print:max-w-none">
-        
-        {/* Header content area */}
-        <header className="mb-8 flex justify-between items-end print:hidden">
-          <div>
-            <div className="text-sm font-semibold text-blue-600 mb-1">Curricolo di Cittadinanza Digitale</div>
-            <h2 className="text-3xl font-bold text-slate-900 capitalize">
-              {navItems.find(i => i.id === activeSection)?.label || 'Dashboard'}
-            </h2>
+        <div class="hero-stats">
+          <div class="hero-card">
+            <small>Competenze chiave</small>
+            <strong>3</strong>
+            Informazioni, comunicazione, sicurezza e benessere.
           </div>
-        </header>
+          <div class="hero-card">
+            <small>Aree DigComp</small>
+            <strong>5</strong>
+            Quadro europeo integrato nel curricolo.
+          </div>
+          <div class="hero-card">
+            <small>Progressione</small>
+            <strong>Biennio → Triennio</strong>
+            Dalla guida all'autonomia critica e responsabile.
+          </div>
+        </div>
+      </section>
 
-        {/* Dynamic View */}
-        {renderContent()}
+      <section class="section searchable" data-block>
+        <div class="grid-4">
+          <div class="card"><h4>Finalità 1</h4><p>Promuovere lo sviluppo della cittadinanza digitale come competenza chiave europea.</p></div>
+          <div class="card"><h4>Finalità 2</h4><p>Integrare competenze tecnologiche, pensiero critico e responsabilità etico-civile.</p></div>
+          <div class="card"><h4>Finalità 3</h4><p>Sostenere l'uso consapevole, sicuro e creativo delle tecnologie nei contesti di studio e vita.</p></div>
+          <div class="card"><h4>Principi pedagogici</h4><p>Metodo scientifico, apprendimento attivo e situato, interdisciplinarità, inclusione e personalizzazione.</p></div>
+        </div>
+      </section>
 
-      </main>
+      <section class="section" id="competenze">
+        <div class="section-head">
+          <div class="eyebrow">Sezioni consultabili</div>
+          <h3>Competenze 10, 11, 12</h3>
+          <p>Ogni competenza è esplorabile con descrizione, nucleo concettuale, traguardi e integrazione dell'Intelligenza Artificiale.</p>
+        </div>
 
-    </div>
-  );
-}
+        <div class="grid-3">
+          <article class="card competenza-card searchable" data-block data-competenza="10">
+            <div class="badge-id">Competenza 10</div>
+            <h4>Accesso critico e responsabile alle informazioni digitali</h4>
+            <p>La competenza digitale coincide con la capacità di validare criticamente informazioni, dati, contenuti e mediazioni algoritmiche, estendendo il metodo scientifico all'ambiente digitale.</p>
+            <div class="soft"><strong>Nucleo concettuale:</strong> Validazione epistemologica dell'informazione digitale.</div>
+            <div class="accordion">
+              <div class="accordion-item open">
+                <button class="accordion-trigger"><span><strong>10.1 — Validazione epistemologica dell'informazione</strong><small>DigComp: 1.1 · 1.2 · 1.3</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Analizzare, confrontare e valutare criticamente fonti, dati e contenuti digitali, distinguendo fatti, opinioni e interpretazioni.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> valutazione critica di contenuti generati da IA; riconoscimento di mis- e disinformazione.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-trigger"><span><strong>10.2 — Dati, modelli e consapevolezza algoritmica</strong><small>DigComp: 1.2 · 1.3 · 5.3</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Interpretare, organizzare e rielaborare dati anche da open data, riconoscendo modelli, limiti e bias algoritmici.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> comprensione di modelli algoritmici, limiti e bias.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-trigger"><span><strong>10.3 — Produzione responsabile della conoscenza digitale</strong><small>DigComp: 3.1 · 3.2 · 3.3 · 4.2</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Produrre e condividere contenuti digitali in modo critico, trasparente e responsabile, rispettando copyright, licenze e citazioni.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> uso trasparente dell'IA e dichiarazione delle fonti.</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card competenza-card searchable" data-block data-competenza="11">
+            <div class="badge-id">Competenza 11</div>
+            <h4>Comunicazione digitale adeguata e cooperazione</h4>
+            <p>La comunicazione digitale è una competenza relazionale e cognitiva complessa: richiede registri adeguati, argomentazione logica e collaborazione responsabile.</p>
+            <div class="soft"><strong>Nucleo concettuale:</strong> Comunicazione scientifica, etica della relazione e collaborazione digitale.</div>
+            <div class="accordion">
+              <div class="accordion-item open">
+                <button class="accordion-trigger"><span><strong>11.1 — Adeguatezza comunicativa e contesto</strong><small>DigComp: 2.1 · 2.5 · 2.6</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Selezionare forme, linguaggi e registri in base a scopo, destinatari e regole degli ambienti digitali.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> uso consapevole dell'identità digitale e delle dinamiche comunicative online.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-trigger"><span><strong>11.2 — Argomentazione razionale e rigore comunicativo</strong><small>DigComp: 2.1 · 2.3 · 1.2</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Argomentare e discutere con chiarezza, coerenza logica, fonti corrette e responsabilità etica.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> contrasto a disinformazione, bias e linguaggi ostili anche in contesti mediati da IA.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-trigger"><span><strong>11.3 — Collaborazione digitale e cittadinanza attiva</strong><small>DigComp: 2.2 · 2.4 · 2.3</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Collaborare in ambienti digitali e piattaforme cooperative con inclusione, rispetto e partecipazione attiva.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> supporto a processi collaborativi senza sostituire la responsabilità umana.</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="card competenza-card searchable" data-block data-competenza="12">
+            <div class="badge-id">Competenza 12</div>
+            <h4>Identità digitale, sicurezza e benessere</h4>
+            <p>Integra dimensione tecnica, giuridica, psicologica ed etica: identità digitale, privacy, sicurezza, benessere e impatto ambientale delle tecnologie.</p>
+            <div class="soft"><strong>Nucleo concettuale:</strong> Integrità digitale, sicurezza e sostenibilità sistemica.</div>
+            <div class="accordion">
+              <div class="accordion-item open">
+                <button class="accordion-trigger"><span><strong>12.1 — Identità digitale, dati e reputazione</strong><small>DigComp: 4.2 · 4.1 · 2.6</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Gestire in modo consapevole identità digitale, dati personali, impronta digitale e reputazione.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> diritti digitali, GDPR, profilazione.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-trigger"><span><strong>12.2 — Sicurezza digitale e valutazione del rischio</strong><small>DigComp: 4.1 · 4.2 · 5.1</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Riconoscere, valutare e prevenire rischi e minacce, proteggendo dispositivi, dati e identità.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> cybersecurity e prevenzione razionale dei rischi.</div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-trigger"><span><strong>12.3 — Benessere digitale e sostenibilità</strong><small>DigComp: 4.3 · 4.4</small></span><span>▾</span></button>
+                <div class="accordion-content">
+                  <p>Usare le tecnologie in modo equilibrato, considerando benessere psicofisico, relazioni e sostenibilità.</p>
+                  <div class="soft"><strong>Integrazione IA:</strong> analisi critica dell'impatto ambientale e sociale delle infrastrutture digitali.</div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section searchable" id="digcomp" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Quadro di riferimento</div>
+          <h3>DigComp 3.0 e dimensione trasversale dell'IA</h3>
+          <p>Il curricolo è collegato alle aree europee della competenza digitale e alle dimensioni emergenti come IA, disinformazione, cybersecurity, benessere e sostenibilità.</p>
+        </div>
+
+        <div class="tabs">
+          <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="digcomp-aree">Aree DigComp</button>
+            <button class="tab-btn" data-tab="digcomp-ia">IA trasversale</button>
+          </div>
+
+          <div class="tab-panel active" id="digcomp-aree">
+            <div class="grid-5">
+              <div class="card"><h4>Area 1</h4><p>Ricerca, valutazione e gestione delle informazioni.</p></div>
+              <div class="card"><h4>Area 2</h4><p>Comunicazione e collaborazione.</p></div>
+              <div class="card"><h4>Area 3</h4><p>Creazione di contenuti digitali.</p></div>
+              <div class="card"><h4>Area 4</h4><p>Sicurezza, benessere e uso responsabile.</p></div>
+              <div class="card"><h4>Area 5</h4><p>Identificazione e risoluzione dei problemi.</p></div>
+            </div>
+            <div class="card" style="margin-top:16px">
+              <h4>Dimensioni emergenti</h4>
+              <div class="badges">
+                <span class="pill">Intelligenza artificiale</span>
+                <span class="pill">Disinformazione e pensiero critico</span>
+                <span class="pill">Cybersecurity</span>
+                <span class="pill">Benessere digitale</span>
+                <span class="pill">Sostenibilità ambientale</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="digcomp-ia">
+            <div class="grid-2">
+              <div class="card"><h4>Comprensione</h4><p>Comprendere il funzionamento di base dei sistemi algoritmici e generativi.</p></div>
+              <div class="card"><h4>Consapevolezza critica</h4><p>Riconoscere limiti, allucinazioni e bias dei contenuti prodotti da IA.</p></div>
+              <div class="card"><h4>Trasparenza</h4><p>Utilizzare strumenti di IA in modo trasparente, dichiarando prompt e modalità d'uso.</p></div>
+              <div class="card"><h4>Supervisione umana</h4><p>Mantenere sempre supervisione critica umana (human-in-the-loop).</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section searchable" id="progressione" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Verticalità del percorso</div>
+          <h3>Progressione biennio e triennio</h3>
+          <p>La consultazione è organizzata per livelli attesi, fasi di sviluppo e obiettivi finali.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>Biennio</h4>
+            <p><strong>Fase:</strong> applicazione guidata, riconoscimento, consapevolezza iniziale.</p>
+            <div class="progress-wrap">
+              <div class="subtle"><strong>Livelli attesi:</strong> Iniziale → Base → Intermedio</div>
+              <div class="progress-bar"><span style="width:55%"></span></div>
+            </div>
+            <div class="soft" style="margin-top:14px">
+              <ul>
+                <li>Riconoscere fonti affidabili.</li>
+                <li>Usare strumenti digitali di base in modo guidato.</li>
+                <li>Comprendere rischi primari della rete e regole di netiquette.</li>
+                <li>Partecipare ad attività collaborative con supporto.</li>
+              </ul>
+            </div>
+            <p><strong>Obiettivo:</strong> raggiungimento del livello Intermedio nelle competenze fondamentali.</p>
+          </div>
+
+          <div class="card">
+            <h4>Triennio</h4>
+            <p><strong>Fase:</strong> autonomia, valutazione critica, responsabilità etica.</p>
+            <div class="progress-wrap">
+              <div class="subtle"><strong>Livelli attesi:</strong> Base → Intermedio → Avanzato</div>
+              <div class="progress-bar"><span style="width:90%"></span></div>
+            </div>
+            <div class="soft" style="margin-top:14px">
+              <ul>
+                <li>Valutare criticamente fonti e dati complessi.</li>
+                <li>Produrre contenuti digitali originali e argomentati.</li>
+                <li>Collaborare efficacemente in ambienti digitali.</li>
+                <li>Gestire identità digitale, sicurezza, benessere e impatto delle tecnologie.</li>
+              </ul>
+            </div>
+            <p><strong>Obiettivo:</strong> Avanzato per Competenze 10 e 11; Intermedio–Avanzato per Competenza 12.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section searchable" id="rubrica" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Valutazione interattiva</div>
+          <h3>Rubrica unitaria di valutazione</h3>
+          <p>Una vista sintetica dei livelli Iniziale, Base, Intermedio e Avanzato per alcuni traguardi chiave.</p>
+        </div>
+
+        <div class="tabs">
+          <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="rub-101">10.1</button>
+            <button class="tab-btn" data-tab="rub-112">11.2</button>
+            <button class="tab-btn" data-tab="rub-122">12.2</button>
+          </div>
+
+          <div class="tab-panel active" id="rub-101">
+            <div class="grid-4">
+              <div class="card"><h5>Iniziale</h5><p>Ricerca informazioni in contesti guidati senza distinguere chiaramente tra fonti attendibili e non attendibili.</p></div>
+              <div class="card"><h5>Base</h5><p>Seleziona informazioni pertinenti e riconosce criteri di attendibilità con supporto.</p></div>
+              <div class="card"><h5>Intermedio</h5><p>Analizza e confronta fonti diverse in contesti di ricerca, distinguendo fatti, opinioni e interpretazioni.</p></div>
+              <div class="card"><h5>Avanzato</h5><p>Valida criticamente fonti e contenuti complessi, anche mediati da algoritmi e IA, riconoscendo disinformazione e bias.</p></div>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="rub-112">
+            <div class="grid-4">
+              <div class="card"><h5>Iniziale</h5><p>Espone opinioni senza fonti o con scarsa coerenza logica.</p></div>
+              <div class="card"><h5>Base</h5><p>Espone idee utilizzando alcune fonti e semplici collegamenti logici.</p></div>
+              <div class="card"><h5>Intermedio</h5><p>Costruisce argomentazioni coerenti utilizzando fonti attendibili e dati.</p></div>
+              <div class="card"><h5>Avanzato</h5><p>Argomenta e discute con rigore logico, fonti verificate e responsabilità etica, contrastando bias e disinformazione.</p></div>
+            </div>
+          </div>
+
+          <div class="tab-panel" id="rub-122">
+            <div class="grid-4">
+              <div class="card"><h5>Iniziale</h5><p>Non riconosce in modo sistematico rischi e minacce digitali.</p></div>
+              <div class="card"><h5>Base</h5><p>Riconosce minacce comuni e applica misure di protezione guidate.</p></div>
+              <div class="card"><h5>Intermedio</h5><p>Applica comportamenti sicuri e misura i rischi in contesti di utilizzo di dispositivi e servizi.</p></div>
+              <div class="card"><h5>Avanzato</h5><p>Analizza e valuta rischi complessi adottando strategie di prevenzione e protezione basate su decisioni consapevoli.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section searchable" id="discipline" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Trasversalità</div>
+          <h3>Integrazione nelle discipline</h3>
+          <p>I Dipartimenti possono utilizzare questa sezione per consultare nuclei concettuali, raccordi disciplinari e finalità dell'integrazione.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card"><p><strong>Area Umanistica:</strong> linguaggio, argomentazione, etica, diritto, storia delle tecnologie.</p></div>
+          <div class="card"><p><strong>Area Scientifica:</strong> data literacy, modelli matematici e algoritmici, validazione di fonti empiriche, cybersecurity.</p></div>
+          <div class="card"><p><strong>Lingue straniere:</strong> comunicazione interculturale digitale, netiquette internazionale, uso critico di traduttori IA.</p></div>
+          <div class="card"><p><strong>Italiano/Storia:</strong> fonti, argomentazione, disinformazione. <strong>Informatica/Scienze applicate:</strong> algoritmi, IA, cybersecurity. <strong>Filosofia/Diritto:</strong> etica digitale, privacy, responsabilità, impatto sociale.</p></div>
+        </div>
+      </section>
+
+      <section class="section searchable" id="classi" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Consultazione per anno</div>
+          <h3>Quadro sinottico delle competenze per classe</h3>
+          <p>Una lettura rapida per vedere focus, discipline guida e nuclei esemplificativi dalla prima alla quinta.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card"><h4>1ª</h4><p><strong>Focus:</strong> introduzione a 10.1, 11.1, 12.3.</p><div class="soft"><strong>Discipline guida:</strong> Italiano, Matematica, Scienze motorie, Religione.</div><div class="soft" style="margin-top:10px"><strong>Nuclei:</strong> fonti base, dati semplici, benessere e rispetto digitale.</div></div>
+          <div class="card"><h4>2ª</h4><p><strong>Focus:</strong> consolidamento 10.1, avvio 10.2, 11.1, 12.1.</p><div class="soft"><strong>Discipline guida:</strong> Storia, Scienze, Inglese, Latino.</div><div class="soft" style="margin-top:10px"><strong>Nuclei:</strong> fonti storiche, analisi testuale, dati ambientali, comunicazione.</div></div>
+          <div class="card"><h4>3ª</h4><p><strong>Focus:</strong> sviluppo pieno 10.2, 11.2, 12.2.</p><div class="soft"><strong>Discipline guida:</strong> Filosofia, Matematica, Informatica, Disegno e Arte, Fisica.</div><div class="soft" style="margin-top:10px"><strong>Nuclei:</strong> modelli algoritmici e fisici, argomentazione, IA, arte digitale.</div></div>
+          <div class="card"><h4>4ª</h4><p><strong>Focus:</strong> sviluppo avanzato 10.3, 11.2, 12.1.</p><div class="soft"><strong>Discipline guida:</strong> Italiano, Diritto, Scienze, Disegno e Arte, Religione.</div><div class="soft" style="margin-top:10px"><strong>Nuclei:</strong> produzione contenuti, normativa, etica delle tecnologie, copyright.</div></div>
+          <div class="card"><h4>5ª</h4><p><strong>Focus:</strong> traguardi finali avanzati 10.3, 11.3, 12.3.</p><div class="soft"><strong>Discipline guida:</strong> tutte le discipline.</div><div class="soft" style="margin-top:10px"><strong>Nuclei:</strong> cittadinanza attiva, progetto PTOF, etica della scienza e conoscenza.</div></div>
+        </div>
+      </section>
+
+      <section class="section searchable" id="attivita" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Didattica attiva</div>
+          <h3>Compiti autentici e attività</h3>
+          <p>Una sezione dedicata a casi d'uso, attività e metodologie per rendere il curricolo operativo.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card"><p>Analisi critica di fonti digitali e fenomeni di disinformazione.</p></div>
+          <div class="card"><p>Produzione di contenuti digitali: presentazioni, report, video, podcast.</p></div>
+          <div class="card"><p>Progetti collaborativi in ambienti digitali.</p></div>
+          <div class="card"><p>Analisi di dati e dataset.</p></div>
+          <div class="card"><p>Simulazioni su privacy, sicurezza e comunicazione online.</p></div>
+          <div class="card"><p>Utilizzo consapevole di strumenti di intelligenza artificiale.</p></div>
+        </div>
+        <div class="card">
+          <h4>Strumenti di valutazione</h4>
+          <div class="grid-3">
+            <div class="soft">Osservazione sistematica delle prestazioni.</div>
+            <div class="soft">Rubrica di valutazione condivisa.</div>
+            <div class="soft">Analisi dei prodotti digitali realizzati dagli studenti.</div>
+            <div class="soft">Partecipazione ad attività collaborative.</div>
+            <div class="soft">Riflessione critica sui processi.</div>
+            <div class="soft">Portfolio digitale, autovalutazione e peer assessment.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section searchable" id="piano" data-block>
+        <div class="section-head">
+          <div class="eyebrow">Attuazione annuale</div>
+          <h3>Fasi operative per il prossimo anno scolastico</h3>
+          <p>Timeline delle macro-fasi di implementazione, dalla co-progettazione alla revisione finale del curricolo.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="card timeline-card">
+            <div><div class="timeline-badge">Fase 1</div><h4>Formazione e Co-progettazione</h4><p class="subtle">Settembre - Ottobre</p></div>
+            <div class="grid-3">
+              <div class="soft">Presentazione del curricolo nei Consigli di Classe e nei Dipartimenti.</div>
+              <div class="soft">Formazione breve ai docenti sulla rubrica e sull'uso consapevole dell'IA.</div>
+              <div class="soft">Selezione dei traguardi e compilazione delle schede operative.</div>
+            </div>
+          </div>
+          <div class="card timeline-card">
+            <div><div class="timeline-badge">Fase 2</div><h4>Sperimentazione didattica</h4><p class="subtle">Novembre - Gennaio</p></div>
+            <div class="grid-3">
+              <div class="soft">Avvio dei moduli interdisciplinari programmati.</div>
+              <div class="soft">Somministrazione dei primi compiti autentici digitali.</div>
+              <div class="soft">Rilevazione iniziale e formativa dei livelli di competenza.</div>
+            </div>
+          </div>
+          <div class="card timeline-card">
+            <div><div class="timeline-badge">Fase 3</div><h4>Consolidamento e Sviluppo</h4><p class="subtle">Febbraio - Aprile</p></div>
+            <div class="grid-3">
+              <div class="soft">Project work multidisciplinari e compiti di realtà più complessi.</div>
+              <div class="soft">Uso sistematico della rubrica unitaria di valutazione.</div>
+              <div class="soft">Tracciamento dei progressi verso Base, Intermedio e Avanzato.</div>
+            </div>
+          </div>
+          <div class="card timeline-card">
+            <div><div class="timeline-badge">Fase 4</div><h4>Valutazione Finale e Restituzione</h4><p class="subtle">Maggio - Giugno</p></div>
+            <div class="grid-3">
+              <div class="soft">Raccolta e analisi degli esiti finali di apprendimento.</div>
+              <div class="soft">Questionari e focus group di feedback agli studenti.</div>
+              <div class="soft">Revisione critica delle fasi svolte e aggiornamento del curricolo.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="monitor">
+          <h3 style="margin:0 0 10px; color:white">Monitoraggio continuo</h3>
+          <p style="margin:0 0 16px; color:rgba(255,255,255,.96)">
+            Il curricolo viene aggiornato in base all'evoluzione delle tecnologie digitali,
+            agli aggiornamenti del framework DigComp, alle indicazioni ministeriali
+            e alle evidenze emerse dalla pratica didattica.
+          </p>
+          <div class="grid-3">
+            <div class="soft-item">Analisi degli esiti di apprendimento.</div>
+            <div class="soft-item">Confronto nei Consigli di classe.</div>
+            <div class="soft-item">Raccolta di evidenze didattiche.</div>
+            <div class="soft-item">Feedback degli studenti.</div>
+            <div class="soft-item">Aggiornamento in base a evoluzione tecnologica e DigComp.</div>
+            <div class="soft-item">Coerenza con indicazioni ministeriali e priorità educative.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const blocks = Array.from(document.querySelectorAll('[data-block]'));
+    const filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+    let currentFilter = 'all';
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function clearHighlights(el) {
+      el.querySelectorAll('mark').forEach(mark => {
+        const parent = mark.parentNode;
+        parent.replaceChild(document.createTextNode(mark.textContent), mark);
+        parent.normalize();
+      });
+    }
+
+    function highlightText(el, query) {
+      clearHighlights(el);
+      if (!query) return;
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      const nodes = [];
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node.parentElement && !['SCRIPT', 'STYLE', 'MARK'].includes(node.parentElement.tagName) && node.nodeValue.trim()) {
+          nodes.push(node);
+        }
+      }
+      const regex = new RegExp(escapeRegExp(query), 'gi');
+      nodes.forEach(node => {
+        const text = node.nodeValue;
+        if (!regex.test(text)) return;
+        regex.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let lastIndex = 0;
+        text.replace(regex, (match, offset) => {
+          frag.appendChild(document.createTextNode(text.slice(lastIndex, offset)));
+          const mark = document.createElement('mark');
+          mark.textContent = match;
+          frag.appendChild(mark);
+          lastIndex = offset + match.length;
+        });
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.trim().toLowerCase();
+      blocks.forEach(block => {
+        const competenza = block.getAttribute('data-competenza');
+        const matchesFilter = currentFilter === 'all' || competenza === currentFilter || !competenza;
+        const text = block.textContent.toLowerCase();
+        const matchesSearch = !query || text.includes(query);
+        block.classList.toggle('hidden', !(matchesFilter && matchesSearch));
+        highlightText(block, query);
+      });
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const item = trigger.parentElement;
+        item.classList.toggle('open');
+      });
+    });
+
+    document.querySelectorAll('.tab-buttons').forEach(group => {
+      const buttons = group.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const container = group.parentElement;
+          container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          container.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+          btn.classList.add('active');
+          const panel = container.querySelector('#' + btn.dataset.tab);
+          if (panel) panel.classList.add('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
