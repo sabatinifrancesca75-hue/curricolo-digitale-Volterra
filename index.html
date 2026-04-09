@@ -1,189 +1,570 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   BookOpen, 
-  PenTool, 
-  LayoutDashboard, 
-  GraduationCap, 
-  ShieldCheck, 
-  MessageSquare,
-  ChevronRight,
-  Sparkles,
-  Menu,
-  X
+  Menu, 
+  X, 
+  FileText, 
+  Printer, 
+  Info,
+  Shield,
+  Cpu,
+  TableProperties,
+  GraduationCap,
+  CalendarDays,
+  Target,
+  LayoutDashboard,
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from './lib/utils';
-import { curriculumData } from './data/curriculum';
-import CurriculumViewer from './components/CurriculumViewer';
-import LessonPlanner from './components/LessonPlanner';
 
-type View = 'dashboard' | 'curriculum' | 'planner';
+// --- COMPONENTI UI RIUTILIZZABILI ---
+const Card = ({ title, icon: Icon, children, className = "" }) => (
+  <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-6 ${className}`}>
+    <div className="flex items-center gap-3 mb-4">
+      {Icon && <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Icon size={20} /></div>}
+      <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+    </div>
+    <div className="text-slate-600">{children}</div>
+  </div>
+);
 
-export default function App() {
-  const [currentView, setCurrentView] = useState<View>('dashboard');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'curriculum', label: 'Curricolo Digitale', icon: BookOpen },
-    { id: 'planner', label: 'Progettazione Lezioni', icon: PenTool },
-  ];
+const TabButton = ({ active, onClick, icon: Icon, label, color }) => {
+  // Correzione per Tailwind: mappa esplicita delle classi colore
+  const activeClasses = {
+    blue: 'border-blue-600 text-blue-700 bg-blue-50',
+    green: 'border-green-600 text-green-700 bg-green-50',
+    orange: 'border-orange-600 text-orange-700 bg-orange-50'
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-slate-200 font-sans selection:bg-blue-500/30">
-      {/* Background Glows */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-900/20 blur-[120px] rounded-full" />
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-6 py-3 font-semibold transition-all border-b-2 ${
+        active 
+          ? activeClasses[color] 
+          : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+      }`}
+    >
+      <Icon size={18} />
+      {label}
+    </button>
+  );
+};
+
+// --- SEZIONI DELL'APP ---
+
+const Dashboard = ({ setSection }) => (
+  <div className="space-y-6 animate-fadeIn">
+    <div className="bg-gradient-to-r from-slate-900 to-blue-900 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
+      <div className="relative z-10">
+        <h1 className="text-3xl font-bold mb-2">Portale Curricolo Digitale</h1>
+        <p className="text-blue-100 max-w-2xl text-lg">
+          Liceo Scientifico "Vito Volterra". Piattaforma per la consultazione del curricolo e la progettazione didattica interdisciplinare.
+        </p>
+        <div className="mt-8 flex gap-4">
+          <button onClick={() => setSection('scheda')} className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-2.5 rounded-lg font-semibold flex items-center transition-colors">
+            <Printer size={18} className="mr-2" />
+            Compila Scheda Operativa
+          </button>
+          <button onClick={() => setSection('4')} className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-2.5 rounded-lg font-semibold transition-colors">
+            Esplora Competenze
+          </button>
+        </div>
+      </div>
+      <Cpu className="absolute -right-10 -bottom-10 w-64 h-64 text-white opacity-5" />
+    </div>
+
+    <div className="grid md:grid-cols-3 gap-6">
+      <div className="bg-white p-6 rounded-xl border-t-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSection('4')}>
+        <Info className="text-blue-500 mb-4" size={32} />
+        <h3 className="font-bold text-lg mb-2">10. Alfabetizzazione e Dati</h3>
+        <p className="text-sm text-slate-500">Accesso critico, validazione fonti e consapevolezza algoritmica.</p>
+      </div>
+      <div className="bg-white p-6 rounded-xl border-t-4 border-green-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSection('4')}>
+        <Menu className="text-green-500 mb-4" size={32} />
+        <h3 className="font-bold text-lg mb-2">11. Comunicazione</h3>
+        <p className="text-sm text-slate-500">Argomentazione razionale, collaborazione e cittadinanza attiva.</p>
+      </div>
+      <div className="bg-white p-6 rounded-xl border-t-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSection('4')}>
+        <Shield className="text-orange-500 mb-4" size={32} />
+        <h3 className="font-bold text-lg mb-2">12. Sicurezza e Benessere</h3>
+        <p className="text-sm text-slate-500">Identità digitale, valutazione del rischio e sostenibilità.</p>
+      </div>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-6">
+      <Card title="Stato del Progetto" icon={AlertCircle}>
+        <ul className="space-y-3 text-sm">
+          <li className="flex justify-between items-center"><span className="text-slate-600">A.S. di riferimento:</span> <strong className="text-slate-900">2025/2026</strong></li>
+          <li className="flex justify-between items-center"><span className="text-slate-600">Stato:</span> <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs font-bold">BOZZA IN REVISIONE</span></li>
+          <li className="flex justify-between items-center"><span className="text-slate-600">Framework Base:</span> <strong className="text-slate-900">DigComp 3.0</strong></li>
+        </ul>
+      </Card>
+      <Card title="Strumenti Rapidi" icon={LayoutDashboard}>
+        <div className="grid grid-cols-2 gap-3">
+          <button onClick={() => setSection('6')} className="p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:text-blue-600 text-left text-sm font-semibold transition-colors flex items-center justify-between">
+            Rubrica Valutazione <ArrowRight size={16} />
+          </button>
+          <button onClick={() => setSection('2')} className="p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:text-blue-600 text-left text-sm font-semibold transition-colors flex items-center justify-between">
+            Aree DigComp <ArrowRight size={16} />
+          </button>
+          <button onClick={() => setSection('3')} className="p-3 border border-slate-200 rounded-lg hover:border-purple-500 hover:text-purple-600 text-left text-sm font-semibold transition-colors flex items-center justify-between col-span-2">
+            Linee Guida Intelligenza Artificiale <ArrowRight size={16} />
+          </button>
+        </div>
+      </Card>
+    </div>
+  </div>
+);
+
+const Section1_Premessa = () => (
+  <div className="space-y-6 animate-fadeIn">
+    <div className="flex items-center justify-between mb-6 border-b pb-4">
+      <h2 className="text-2xl font-bold text-slate-800">1. Premessa Metodologica</h2>
+    </div>
+
+    <div className="bg-blue-600 text-white rounded-xl p-6 shadow-md">
+      <h3 className="font-bold text-lg mb-2 flex items-center"><Target className="mr-2" /> Principio Unitario di Fondo</h3>
+      <p className="text-blue-50 leading-relaxed">
+        Nel Liceo Scientifico la cittadinanza digitale si fonda sull'applicazione del <strong>metodo critico e scientifico</strong> all'ecosistema digitale, inteso come ambiente informativo, relazionale e socio-tecnico complesso. Le competenze non sono compartimenti stagni, ma tre prospettive: conoscenza, tecnologia e responsabilità umana.
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-2 gap-6">
+      <Card title="Finalità" icon={GraduationCap}>
+        <ul className="space-y-2">
+          <li className="flex items-start gap-2"><CheckCircle2 className="text-green-500 shrink-0 mt-0.5" size={16} /><span>Cittadinanza digitale come competenza chiave europea.</span></li>
+          <li className="flex items-start gap-2"><CheckCircle2 className="text-green-500 shrink-0 mt-0.5" size={16} /><span>Integrazione di tecnologia, pensiero critico ed etica.</span></li>
+          <li className="flex items-start gap-2"><CheckCircle2 className="text-green-500 shrink-0 mt-0.5" size={16} /><span>Uso consapevole e sicuro negli studi e nella vita.</span></li>
+        </ul>
+      </Card>
+      <Card title="Principi Pedagogici" icon={BookOpen}>
+        <ul className="space-y-2">
+          <li className="flex items-start gap-2"><CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} /><span>Centralità del metodo scientifico.</span></li>
+          <li className="flex items-start gap-2"><CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} /><span>Apprendimento situato (compiti autentici).</span></li>
+          <li className="flex items-start gap-2"><CheckCircle2 className="text-blue-500 shrink-0 mt-0.5" size={16} /><span>Trasversalità alle discipline.</span></li>
+        </ul>
+      </Card>
+    </div>
+  </div>
+);
+
+const Section2_DigComp = () => (
+  <div className="space-y-6 animate-fadeIn">
+    <div className="flex items-center justify-between mb-6 border-b pb-4">
+      <h2 className="text-2xl font-bold text-slate-800">2. Riferimento al Framework DigComp 3.0</h2>
+    </div>
+    
+    <p className="text-slate-600 mb-4">
+      Il curricolo si basa sulle cinque aree di competenza del framework europeo DigComp 3.0, garantendo standardizzazione e riconoscibilità.
+    </p>
+
+    <div className="grid gap-4">
+      {[
+        { id: 1, title: "Ricerca, valutazione e gestione delle informazioni", desc: "Individuare, selezionare, analizzare e organizzare dati digitali." },
+        { id: 2, title: "Comunicazione e collaborazione", desc: "Interazione, partecipazione e collaborazione negli ambienti digitali." },
+        { id: 3, title: "Creazione di contenuti digitali", desc: "Produzione, rielaborazione e condivisione nel rispetto del copyright." },
+        { id: 4, title: "Sicurezza, benessere e uso responsabile", desc: "Protezione dati, sicurezza dispositivi, benessere e sostenibilità." },
+        { id: 5, title: "Identificazione e risoluzione dei problemi", desc: "Uso critico e creativo per affrontare problemi e innovare." }
+      ].map(area => (
+        <div key={area.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-start">
+          <div className="w-10 h-10 bg-blue-100 text-blue-600 font-bold rounded-lg flex items-center justify-center mr-4 shrink-0">
+            Area {area.id}
+          </div>
+          <div>
+            <h4 className="font-bold text-slate-800 text-lg">{area.title}</h4>
+            <p className="text-slate-600 mt-1">{area.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const Section3_IA = () => (
+  <div className="space-y-6 animate-fadeIn">
+    <div className="flex items-center justify-between mb-6 border-b pb-4">
+      <h2 className="text-2xl font-bold text-slate-800">3. Dimensione Trasversale dell'IA</h2>
+    </div>
+
+    <div className="bg-gradient-to-br from-purple-900 to-indigo-900 rounded-2xl p-8 text-white shadow-lg">
+      <Cpu className="w-12 h-12 text-purple-300 mb-4" />
+      <h3 className="text-2xl font-bold mb-4">L'IA come competenza di cittadinanza</h3>
+      <p className="text-purple-100 text-lg leading-relaxed mb-8">
+        Nel nostro istituto, l'Intelligenza Artificiale non è vietata, ma gestita come strumento critico. Viene considerata una competenza trasversale che richiede supervisione umana costante.
+      </p>
+      
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+          <h4 className="font-bold text-purple-200 mb-2">Comprendere i meccanismi</h4>
+          <p className="text-sm text-purple-50">Capire il funzionamento di base dei sistemi algoritmici e generativi, uscendo dalla logica della "scatola magica".</p>
+        </div>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+          <h4 className="font-bold text-purple-200 mb-2">Riconoscere limiti e bias</h4>
+          <p className="text-sm text-purple-50">Saper identificare allucinazioni, pregiudizi algoritmici (bias) e limiti nei contenuti prodotti.</p>
+        </div>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+          <h4 className="font-bold text-purple-200 mb-2">Uso Trasparente</h4>
+          <p className="text-sm text-purple-50">Dichiarare sempre l'uso dell'IA (i prompt utilizzati, gli strumenti scelti) nei compiti e nelle ricerche.</p>
+        </div>
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+          <h4 className="font-bold text-purple-200 mb-2">Human-in-the-loop</h4>
+          <p className="text-sm text-purple-50">Esercitare sempre la supervisione critica: la responsabilità finale del prodotto rimane dell'essere umano.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const Section4_Competenze = () => {
+  const [activeTab, setActiveTab] = useState('10');
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-2xl font-bold text-slate-800">4. Struttura del Curricolo</h2>
+      </div>
+      <p className="text-slate-600 mb-6">Naviga tra le Competenze di Educazione Civica per visualizzare i traguardi specifici.</p>
+
+      {/* Tabs */}
+      <div className="flex overflow-x-auto border-b border-slate-200 bg-white rounded-t-xl">
+        <TabButton active={activeTab === '10'} onClick={() => setActiveTab('10')} icon={Info} label="Comp. 10 - Info & Dati" color="blue" />
+        <TabButton active={activeTab === '11'} onClick={() => setActiveTab('11')} icon={Menu} label="Comp. 11 - Comunicazione" color="green" />
+        <TabButton active={activeTab === '12'} onClick={() => setActiveTab('12')} icon={Shield} label="Comp. 12 - Sicurezza" color="orange" />
       </div>
 
-      {/* Sidebar */}
-      <aside 
-        className={cn(
-          "fixed top-0 left-0 z-40 h-screen transition-transform border-r border-white/10 bg-black/40 backdrop-blur-xl",
-          isSidebarOpen ? "w-64 translate-x-0" : "w-20 -translate-x-full md:translate-x-0"
-        )}
-      >
-        <div className="flex flex-col h-full px-3 py-4">
-          <div className="flex items-center gap-3 px-2 mb-10">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/20">
-              <GraduationCap className="w-6 h-6 text-white" />
+      {/* Content Area */}
+      <div className="bg-white border border-t-0 border-slate-200 rounded-b-xl p-8 shadow-sm">
+        
+        {activeTab === '10' && (
+          <div className="animate-fadeIn space-y-6">
+            <h3 className="text-2xl font-bold text-blue-800 mb-6 border-b pb-4">Accesso critico e responsabile alle informazioni</h3>
+            <div className="grid gap-6">
+              <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                <h4 className="font-bold text-slate-800 text-lg">10.1 Validazione epistemologica</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente è in grado di analizzare, confrontare e valutare criticamente fonti, dati e contenuti digitali in contesti di ricerca complessa, distinguendo fatti, opinioni e interpretazioni.</p>
+              </div>
+              <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                <h4 className="font-bold text-slate-800 text-lg">10.2 Consapevolezza algoritmica</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente è in grado di interpretare, organizzare e rielaborare dati e informazioni, riconoscendo il ruolo dei modelli matematici e algoritmici, i loro limiti e bias.</p>
+              </div>
+              <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                <h4 className="font-bold text-slate-800 text-lg">10.3 Produzione responsabile</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente produce contenuti digitali operando in modo critico e responsabile, nel rispetto del diritto d'autore e dichiarando l'eventuale uso di IA.</p>
+              </div>
             </div>
-            {isSidebarOpen && (
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400"
-              >
-                Volterra Digital
-              </motion.div>
-            )}
           </div>
+        )}
 
-          <nav className="space-y-2 flex-1">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setCurrentView(item.id as View)}
-                className={cn(
-                  "flex items-center w-full p-3 rounded-xl transition-all duration-200 group",
-                  currentView === item.id 
-                    ? "bg-blue-600/10 text-blue-400 border border-blue-500/20" 
-                    : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
-                )}
-              >
-                <item.icon className={cn(
-                  "w-5 h-5 transition-colors",
-                  currentView === item.id ? "text-blue-400" : "text-slate-500 group-hover:text-slate-300"
-                )} />
-                {isSidebarOpen && (
-                  <span className="ml-3 font-medium">{item.label}</span>
-                )}
-              </button>
-            ))}
-          </nav>
+        {activeTab === '11' && (
+          <div className="animate-fadeIn space-y-6">
+            <h3 className="text-2xl font-bold text-green-800 mb-6 border-b pb-4">Comunicazione e cooperazione digitale</h3>
+            <div className="grid gap-6">
+              <div className="bg-green-50 p-5 rounded-lg border border-green-100">
+                <h4 className="font-bold text-slate-800 text-lg">11.1 Adeguatezza comunicativa</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente usa consapevolmente linguaggi e registri della comunicazione digitale nei diversi contesti, adattando lo stile allo scopo e ai destinatari.</p>
+              </div>
+              <div className="bg-green-50 p-5 rounded-lg border border-green-100">
+                <h4 className="font-bold text-slate-800 text-lg">11.2 Argomentazione razionale</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente argomenta e discute idee in rete utilizzando criteri di coerenza logico-argomentativa, contrastando fallacie logiche e linguaggi ostili.</p>
+              </div>
+              <div className="bg-green-50 p-5 rounded-lg border border-green-100">
+                <h4 className="font-bold text-slate-800 text-lg">11.3 Collaborazione digitale</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente partecipa a processi di costruzione condivisa della conoscenza in ambienti cooperativi, assumendo comportamenti inclusivi.</p>
+              </div>
+            </div>
+          </div>
+        )}
 
-          <div className="mt-auto p-2">
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="flex items-center justify-center w-full p-2 rounded-lg hover:bg-white/5 text-slate-500 transition-colors"
-            >
-              {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+        {activeTab === '12' && (
+          <div className="animate-fadeIn space-y-6">
+            <h3 className="text-2xl font-bold text-orange-800 mb-6 border-b pb-4">Identità digitale, sicurezza e benessere</h3>
+            <div className="grid gap-6">
+              <div className="bg-orange-50 p-5 rounded-lg border border-orange-100">
+                <h4 className="font-bold text-slate-800 text-lg">12.1 Identità digitale e reputazione</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente gestisce consapevolmente i dati personali e l'impronta digitale, conoscendo normative e conseguenze sulla reputazione.</p>
+              </div>
+              <div className="bg-orange-50 p-5 rounded-lg border border-orange-100">
+                <h4 className="font-bold text-slate-800 text-lg">12.2 Sicurezza digitale</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente valuta e previene rischi negli ambienti digitali, adottando misure per proteggere dispositivi e identità.</p>
+              </div>
+              <div className="bg-orange-50 p-5 rounded-lg border border-orange-100">
+                <h4 className="font-bold text-slate-800 text-lg">12.3 Benessere e sostenibilità</h4>
+                <p className="text-slate-600 mt-2 leading-relaxed">Lo studente usa le tecnologie in modo equilibrato, orientandosi al benessere psicofisico e alla sostenibilità ambientale.</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const Section6_Rubrica = () => (
+  <div className="space-y-6 animate-fadeIn">
+    <div className="flex items-center justify-between mb-6 border-b pb-4">
+      <h2 className="text-2xl font-bold text-slate-800">6. Rubrica di Valutazione</h2>
+    </div>
+    
+    <p className="text-slate-600 mb-6">
+      Sintesi degli indicatori per la valutazione delle competenze, allineati ai livelli DigComp (Base, Intermedio, Avanzato).
+    </p>
+
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
+      <table className="w-full text-sm text-left">
+        <thead className="bg-slate-800 text-white">
+          <tr>
+            <th className="p-4 w-1/4">Competenza</th>
+            <th className="p-4">Livello Base</th>
+            <th className="p-4">Livello Intermedio</th>
+            <th className="p-4">Livello Avanzato</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-200 text-slate-700">
+          <tr className="hover:bg-slate-50">
+            <td className="p-4 font-bold text-blue-700">10. Info e Dati</td>
+            <td className="p-4">Seleziona informazioni pertinenti con supporto; riconosce fatti/opinioni.</td>
+            <td className="p-4">Verifica attendibilità fonti; analizza dataset distinguendo interpretazioni.</td>
+            <td className="p-4 font-semibold">Valida fonti complesse (anche IA); riconosce bias algoritmici; produce contenuti citando le fonti.</td>
+          </tr>
+          <tr className="hover:bg-slate-50">
+            <td className="p-4 font-bold text-green-700">11. Comunicazione</td>
+            <td className="p-4">Usa linguaggio adeguato e rispetta la netiquette con guida.</td>
+            <td className="p-4">Argomenta usando fonti attendibili; partecipa attivamente online.</td>
+            <td className="p-4 font-semibold">Seleziona registri in contesti complessi; contrasta fallacie/odio; coordina lavori collaborativi.</td>
+          </tr>
+          <tr className="hover:bg-slate-50">
+            <td className="p-4 font-bold text-orange-700">12. Sicurezza</td>
+            <td className="p-4">Applica impostazioni privacy base; riconosce comportamenti dannosi.</td>
+            <td className="p-4">Gestisce dati in autonomia; misura i rischi; usa la rete in modo equilibrato.</td>
+            <td className="p-4 font-semibold">Valuta rischi complessi; analizza impatto etico (GDPR, profilazione) e promuove la sostenibilità.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+// --- COMPONENTE SCHEDA OPERATIVA ---
+const SchedaOperativa = () => (
+  <div className="animate-fadeIn bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-slate-900 text-white p-6 flex justify-between items-center print:bg-white print:text-black print:border-b-2">
+      <div>
+        <h2 className="text-2xl font-bold flex items-center"><Printer className="mr-3" /> Scheda Progettazione Modulo</h2>
+        <p className="text-slate-400 text-sm mt-1 print:text-slate-600">Da compilare a cura del Consiglio di Classe / Dipartimento</p>
+      </div>
+      <button onClick={() => window.print()} className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors print:hidden">
+        Stampa/Esporta PDF
+      </button>
+    </div>
+
+    <form className="p-8 space-y-8 text-sm max-w-4xl mx-auto">
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Dipartimento</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
+        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Disciplina</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
+        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Classe/i</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
+        <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Periodo</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
+      </div>
+
+      <div className="border-t border-slate-200 pt-6">
+        <h3 className="text-lg font-bold text-slate-800 mb-4">Riferimenti Curricolari</h3>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <p className="font-semibold text-slate-700">Competenza Target:</p>
+            <label className="flex items-center p-3 border border-slate-200 rounded cursor-pointer hover:bg-blue-50"><input type="radio" name="comp" className="mr-3 w-4 h-4 text-blue-600" /> <span className="font-medium">10 – Info e Dati</span></label>
+            <label className="flex items-center p-3 border border-slate-200 rounded cursor-pointer hover:bg-green-50"><input type="radio" name="comp" className="mr-3 w-4 h-4 text-green-600" /> <span className="font-medium">11 – Comunicazione</span></label>
+            <label className="flex items-center p-3 border border-slate-200 rounded cursor-pointer hover:bg-orange-50"><input type="radio" name="comp" className="mr-3 w-4 h-4 text-orange-600" /> <span className="font-medium">12 – Sicurezza & Benessere</span></label>
+          </div>
+          <div>
+            <p className="font-semibold text-slate-700 mb-2">Codice Traguardo (es. 10.1):</p>
+            <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none mb-4" />
+            
+            <p className="font-semibold text-slate-700 mb-2">Nucleo Disciplinare:</p>
+            <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2" placeholder="Quali argomenti della tua materia tratterai?"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 pt-6">
+        <h3 className="text-lg font-bold text-slate-800 mb-4">L'Attività (Compito Autentico)</h3>
+        <div className="space-y-4">
+          <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Titolo Attività</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
+          <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Cosa fanno gli studenti?</label><textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="3"></textarea></div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Prodotto finale atteso</label><input type="text" className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" /></div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Modalità</label>
+              <div className="flex gap-4 pt-2">
+                <label className="flex items-center"><input type="checkbox" className="mr-2" /> Individuale</label>
+                <label className="flex items-center"><input type="checkbox" className="mr-2" /> Gruppo</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-purple-200 bg-purple-50/50 -mx-8 px-8 py-6">
+        <h3 className="text-lg font-bold text-purple-900 mb-4 flex items-center"><Cpu className="mr-2 w-5 h-5" /> Impatto Intelligenza Artificiale</h3>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <p className="font-medium text-slate-700 mb-3">L'attività prevede esplicitamente l'uso di IA?</p>
+            <div className="flex gap-6 mb-4">
+              <label className="flex items-center"><input type="radio" name="ia" className="mr-2 w-4 h-4 text-purple-600" /> No</label>
+              <label className="flex items-center"><input type="radio" name="ia" className="mr-2 w-4 h-4 text-purple-600" /> Sì</label>
+            </div>
+            <div className="space-y-2 pl-4 border-l-2 border-purple-200">
+              <label className="flex items-center"><input type="checkbox" className="mr-2" /> Analisi critica (Fact-checking output)</label>
+              <label className="flex items-center"><input type="checkbox" className="mr-2" /> Produzione assistita testuale/visiva</label>
+              <label className="flex items-center"><input type="checkbox" className="mr-2" /> Confronto Umano vs Macchina</label>
+            </div>
+          </div>
+          <div>
+            <p className="font-medium text-slate-700 mb-2">Come verrà documentato l'apporto dell'IA?</p>
+            <textarea className="w-full bg-white border border-purple-200 rounded p-2 focus:ring-2 focus:ring-purple-500 outline-none" rows="3" placeholder="Es: Gli studenti dovranno allegare i prompt usati..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 pt-6 grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">Valutazione</h3>
+          <p className="text-xs text-slate-500 mb-2">Evidenze osservabili e indicatori dalla rubrica</p>
+          <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none mb-3" rows="3"></textarea>
+          <div className="flex gap-4 p-3 bg-slate-50 rounded border border-slate-200">
+            <span className="font-bold text-slate-600 mr-2">Livello Atteso:</span>
+            <label className="flex items-center"><input type="checkbox" className="mr-1" /> Base</label>
+            <label className="flex items-center"><input type="checkbox" className="mr-1" /> Int.</label>
+            <label className="flex items-center"><input type="checkbox" className="mr-1" /> Avanz.</label>
+          </div>
+        </div>
+        <div>
+           <h3 className="text-lg font-bold text-slate-800 mb-2">Riflessione Docente (Post)</h3>
+           <p className="text-xs text-slate-500 mb-2">Da compilare a fine modulo</p>
+           <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none mb-2" rows="2" placeholder="Cosa ha funzionato?"></textarea>
+           <textarea className="w-full bg-slate-50 border border-slate-200 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" rows="2" placeholder="Cosa migliorare?"></textarea>
+        </div>
+      </div>
+
+    </form>
+  </div>
+);
+
+// --- APP ROOT ---
+
+export default function App() {
+  const [activeSection, setActiveSection] = useState('home');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Mappa di navigazione aggiornata con TUTTI gli ID reali
+  const navItems = [
+    { id: 'home', label: 'Dashboard', icon: LayoutDashboard },
+    { id: '1', label: 'Premessa', icon: BookOpen },
+    { id: '2', label: 'Aree DigComp', icon: Target },
+    { id: '4', label: 'Competenze & Traguardi', icon: Info },
+    { id: '3', label: 'Guidelines IA', icon: Cpu },
+    { id: '6', label: 'Rubrica Valutazione', icon: TableProperties },
+    { id: 'scheda', label: 'Scheda Operativa', icon: FileText, isSpecial: true },
+  ];
+
+  // Ora il renderContent gestisce tutte le casistiche senza "cadere nel vuoto"
+  const renderContent = () => {
+    switch(activeSection) {
+      case 'home': return <Dashboard setSection={setActiveSection} />;
+      case '1': return <Section1_Premessa />;
+      case '2': return <Section2_DigComp />;
+      case '3': return <Section3_IA />;
+      case '4': return <Section4_Competenze />;
+      case '6': return <Section6_Rubrica />;
+      case 'scheda': return <SchedaOperativa />;
+      default: return <Dashboard setSection={setActiveSection} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-100 flex font-sans text-slate-900 selection:bg-blue-200">
+      
+      {/* Sidebar Navigation */}
+      <aside className={`
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        md:translate-x-0 fixed md:sticky top-0 left-0 z-20 w-64 h-screen 
+        bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out
+        flex flex-col print:hidden
+      `}>
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h1 className="font-extrabold text-xl text-slate-900 tracking-tight">Vito Volterra</h1>
+            <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mt-1">DigiEdu Portal</p>
+          </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-slate-400 hover:text-slate-700">
+            <X size={20} />
+          </button>
+        </div>
+        
+        <nav className="flex-1 overflow-y-auto py-6 px-4">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">Menu Principale</p>
+          <ul className="space-y-1.5">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+              return (
+                <li key={item.id}>
+                  <button
+                    onClick={() => {
+                      setActiveSection(item.id);
+                      setIsSidebarOpen(false);
+                    }}
+                    className={`w-full text-left flex items-center px-3 py-2.5 rounded-lg transition-all text-sm font-medium
+                      ${isActive 
+                        ? (item.isSpecial ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-50 text-blue-700') 
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}
+                      ${item.isSpecial && !isActive ? 'mt-6 border border-slate-200 bg-white shadow-sm' : ''}
+                    `}
+                  >
+                    <Icon className={`w-5 h-5 mr-3 ${isActive && !item.isSpecial ? 'text-blue-600' : (item.isSpecial && isActive ? 'text-white' : 'text-slate-400')}`} />
+                    {item.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="p-4 border-t border-slate-100">
+          <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-500 text-center">
+            V 1.0 (Bozza 25/26)
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className={cn(
-        "transition-all duration-300 min-h-screen",
-        isSidebarOpen ? "md:ml-64" : "md:ml-20"
-      )}>
-        <div className="p-4 md:p-8 max-w-7xl mx-auto">
-          <AnimatePresence mode="wait">
-            {currentView === 'dashboard' && (
-              <motion.div
-                key="dashboard"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-8"
-              >
-                <header>
-                  <h1 className="text-4xl font-bold tracking-tight mb-2">Benvenuto, Docente</h1>
-                  <p className="text-slate-400 text-lg">Curricolo Digitale d'Istituto - Liceo Scientifico Vito Volterra</p>
-                </header>
+      {/* Mobile Topbar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-10 px-4 py-3 flex items-center justify-between print:hidden">
+        <div className="font-bold text-slate-800">DigiEdu Portal</div>
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -mr-2 text-slate-600"><Menu size={20} /></button>
+      </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-blue-500/30 transition-colors group">
-                    <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <ShieldCheck className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Sicurezza & Identità</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">Gestione consapevole dell'impronta digitale e protezione dei dati personali.</p>
-                  </div>
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-indigo-500/30 transition-colors group">
-                    <div className="w-12 h-12 rounded-lg bg-indigo-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <MessageSquare className="w-6 h-6 text-indigo-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Comunicazione</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">Argomentazione razionale e rigore scientifico negli ambienti digitali.</p>
-                  </div>
-                  <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-purple-500/30 transition-colors group">
-                    <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Sparkles className="w-6 h-6 text-purple-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">AI Literacy</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed">Comprensione critica dei sistemi algoritmici e dell'Intelligenza Artificiale.</p>
-                  </div>
-                </div>
+      {/* Overlay for mobile sidebar */}
+      {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-10 md:hidden print:hidden" onClick={() => setIsSidebarOpen(false)} />}
 
-                <section className="p-8 rounded-3xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-500/20">
-                  <div className="flex flex-col md:flex-row items-center gap-8">
-                    <div className="flex-1 space-y-4">
-                      <h2 className="text-3xl font-bold">Progetta la tua prossima lezione</h2>
-                      <p className="text-slate-300">Usa il nostro assistente basato su AI per generare attività didattiche allineate ai traguardi del curricolo.</p>
-                      <button 
-                        onClick={() => setCurrentView('planner')}
-                        className="px-6 py-3 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-colors flex items-center gap-2"
-                      >
-                        Inizia ora <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="w-full md:w-1/3 aspect-video rounded-2xl bg-black/40 border border-white/10 flex items-center justify-center overflow-hidden relative">
-                      <div className="absolute inset-0 bg-gradient-to-t from-blue-500/20 to-transparent" />
-                      <PenTool className="w-16 h-16 text-blue-400/50" />
-                    </div>
-                  </div>
-                </section>
-              </motion.div>
-            )}
+      {/* Main Area */}
+      <main className="flex-1 w-full max-w-6xl mx-auto p-4 pt-20 md:p-8 lg:p-10 print:p-0 print:m-0 print:max-w-none">
+        
+        {/* Header content area */}
+        <header className="mb-8 flex justify-between items-end print:hidden">
+          <div>
+            <div className="text-sm font-semibold text-blue-600 mb-1">Curricolo di Cittadinanza Digitale</div>
+            <h2 className="text-3xl font-bold text-slate-900 capitalize">
+              {navItems.find(i => i.id === activeSection)?.label || 'Dashboard'}
+            </h2>
+          </div>
+        </header>
 
-            {currentView === 'curriculum' && (
-              <motion.div
-                key="curriculum"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <CurriculumViewer />
-              </motion.div>
-            )}
+        {/* Dynamic View */}
+        {renderContent()}
 
-            {currentView === 'planner' && (
-              <motion.div
-                key="planner"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <LessonPlanner />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </main>
+
     </div>
   );
 }
-
